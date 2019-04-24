@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from djang.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.text import slugify
 
 from tinymce.models import HTMLField
@@ -46,7 +46,7 @@ class Project(models.Model):
         auto_now=True
     )
     date_of_end = models.DateTimeField(_('date of end'))
-    is_active = models.BooleanFiel(_('is active'), default=True)
+    is_active = models.BooleanField(_('is active'), default=True)
 
     status = models.ForeignKey(
         'Status',
