@@ -22,5 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('projects/', include('projectApp.urls')),
     path('', include('staticPageApp.urls')),
-    url(r'^tinymce/', include('tinymce.urls')),
+    path('tinymce/', include('tinymce.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_URL)

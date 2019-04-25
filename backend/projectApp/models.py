@@ -1,15 +1,18 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import (
+    MinValueValidator,
+    MaxValueValidator,
+    FileExtensionValidator
+)
 from django.utils.text import slugify
 
 from tinymce.models import HTMLField
+from projectApp.validators import FileSizeValidator
 
 
 class Project(models.Model):
-    """
-    Represents project, published on the web-site.
-    """
+    """Represents project, published on the web-site."""
 
     title = models.CharField(
         _('title'),
@@ -20,17 +23,23 @@ class Project(models.Model):
     slug = models.SlugField(
         _('slug'),
         max_length=128,
+        blank=True,
+        null=True,
         unique=True,
         help_text="At most 128 characters, allowed characters:'-_a-z0-9'."
     )
     preview = models.ImageField(
         _('preview'),
         upload_to='projectApp/previews/',
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg']),
+            FileSizeValidator(2.5 * 1024 * 1024)
+        ],
         blank=True,
         null=True
     )
     short_description = models.TextField(_('short description'))
-    full_description = models.HTMLField(_('full description'))
+    full_description = HTMLField(_('full description'))
     number_of_people = models.PositiveSmallIntegerField(
         _('number of people'),
         default=1,
@@ -45,12 +54,11 @@ class Project(models.Model):
         _('date of update'),
         auto_now=True
     )
-    date_of_end = models.DateTimeField(_('date of end'))
+    date_of_end = models.DateTimeField(_('date of end'), null=True, blank=True)
     is_active = models.BooleanField(_('is active'), default=True)
 
     status = models.ForeignKey(
         'Status',
-        blank=True,
         null=True,
         on_delete=models.SET_NULL,
         verbose_name=_('status')
@@ -72,7 +80,7 @@ class Project(models.Model):
         # Check preview, if it has updated, remove old image:
         try:
             old_self = Project.objects.get(id=self.id)
-            if old_self.preview != self.preview:
+            if (not self.preview) or self.preview != old_self.preview:
                 old_self.preview.delete(save=False)
         except:
             # If it's a new project or a first preview, just don't do nothing:
@@ -98,6 +106,7 @@ class Tag(models.Model):
         _('slug'),
         max_length=50,
         unique=True,
+        null=True,
         help_text="At most 50 characters, allowed characters:'-_a-z0-9'."
     )
 
