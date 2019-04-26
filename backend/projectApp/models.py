@@ -18,7 +18,7 @@ class Project(models.Model):
         _('title'),
         max_length=255,
         unique=True,
-        help_text="At most 255 characters."
+        help_text=_("At most 255 characters.")
     )
     slug = models.SlugField(
         _('slug'),
@@ -26,7 +26,7 @@ class Project(models.Model):
         blank=True,
         null=True,
         unique=True,
-        help_text="At most 128 characters, allowed characters:'-_a-z0-9'."
+        help_text=_("At most 128 characters, allowed characters:'-_a-z0-9'.")
     )
     preview = models.ImageField(
         _('preview'),
@@ -44,15 +44,17 @@ class Project(models.Model):
         _('number of people'),
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(1000)],
-        help_text="Positive integer in range 1 to 1000 inclusive."
+        help_text=_("Positive integer in range 1 to 1000 inclusive.")
     )
     date_of_created = models.DateTimeField(
         _('date of creation'),
-        auto_now_add=True
+        auto_now_add = True,
+        auto_now = False
     )
     date_of_updated = models.DateTimeField(
         _('date of update'),
-        auto_now=True
+        auto_now_add = False,
+        auto_now = True
     )
     date_of_end = models.DateTimeField(_('date of end'), null=True, blank=True)
     is_active = models.BooleanField(_('is active'), default=True)
@@ -70,8 +72,8 @@ class Project(models.Model):
     )
 
     class Meta:
-        verbose_name = "enrolled project"
-        verbose_name_plural = "enrolled projects"
+        verbose_name = _("enrolled project")
+        verbose_name_plural = _("enrolled projects")
 
     def save(self, *args, **kwargs):
         # Update slug field, if it's empty - write slugified title there:
@@ -92,31 +94,35 @@ class Project(models.Model):
         return "'%s' project." % self.title
 
 class Tag(models.Model):
-    """ Represents tag which marks programming language or technology,
-        used in some project. Project can have many tags, so it has
-        one to many relation with Project model. """
+    """
+    Represents tag which marks programming language or technology,
+    used in some project. Project can have many tags, so it has
+    one to many relation with Project model.
+    """
 
     title = models.CharField(
         _('title'),
         max_length=50,
         unique=True,
-        help_text="At most 50 characters."
+        help_text=_("At most 50 characters.")
     )
     slug = models.SlugField(
         _('slug'),
         max_length=50,
         unique=True,
         null=True,
-        help_text="At most 50 characters, allowed characters:'-_a-z0-9'."
+        help_text=_("At most 50 characters, allowed characters:'-_a-z0-9'.")
     )
 
     class Meta:
-        verbose_name = "project's tag"
-        verbose_name_plural = "project's tags"
+        verbose_name = _("project's tag")
+        verbose_name_plural = _("project's tags")
 
     def save(self, *args, **kwargs):
-        """ Before storing data in database,
-        converts slug string to lower case. """
+        """
+        Before storing data in database,
+        converts slug string to lower case.
+        """
 
         self.slug = self.slug.lower()
         super().save(*args, **kwargs)
@@ -125,18 +131,21 @@ class Tag(models.Model):
         return self.title
 
 class Status(models.Model):
-    """ Represents status of some project. (for ex. 'active', 'complete') """
+    """
+    Represents status of some project.
+    (for ex. 'active', 'complete')
+    """
 
     title = models.CharField(
         _('title'),
         max_length=16,
         unique=True,
-        help_text="At most 16 characters."
+        help_text=_("At most 16 characters.")
     )
 
     class Meta:
-        verbose_name = "project's status"
-        verbose_name_plural = "project's statuses"
+        verbose_name = _("project's status")
+        verbose_name_plural = _("project's statuses")
 
     def __str__(self):
         return "Status: '%s'." % self.title
