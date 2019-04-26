@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.utils.deconstruct import deconstructible
 
+@deconstructible
 class FileSizeValidator:
     """
     Takes maximum size, allowed for a file, in bytes.
@@ -49,7 +51,7 @@ class FileSizeValidator:
         options_quantity = len(FileSizeValidator._decimal_prefixes)
         for i in range(options_quantity, 0, -1):
             base = 1024 ** i
-            if self.max_size > base:
+            if self.max_size >= base:
                 max_size /= base
                 prefix = FileSizeValidator._decimal_prefixes[i - 1]
                 break
